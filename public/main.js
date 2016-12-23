@@ -15,7 +15,7 @@ $(document).ready(function () {
                         }
                     })
                 } else {
-                    alert('la dirección: ' + url + " no es válida. Por favor verifiquéla nuevamente.")
+                    alert('la dirección: ' + url + " no es válida. Por favor inténtelo nuevamente. Toda dirección deber comenzar por: 'http(s)://www...'")
                 }
             }
         } else {
@@ -38,17 +38,14 @@ $(document).ready(function () {
     }
 
     function removeClass() {
-        console.log('entró!')
         $('td').each(function () {
-            console.log('esta vaina: ')
             if (e.textContent() === "N/A")
                 e.removeClass()
         })
-        console.log('salió!')
     }
 
     function validURL(url) {
-        if (url.indexOf('.com') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
+        if ( url.indexOf('http://www.') != -1 || url.indexOf('.com') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
             return true
         else
             return false

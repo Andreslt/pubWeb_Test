@@ -7,7 +7,7 @@ var exphbs = require('express-handlebars');
 var path = require('path');
 var fs = require('fs');
 var validUrl = require('valid-url');
-var app     = express();
+var app = express();
 var hbsEngine = exphbs.create();
 
 // View Engine
@@ -24,40 +24,72 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //SOCIAL NETWORKS
-var social_networks =['https://www.facebook.com', 'https://twitter.com', 'https://plus.google.com', 'http://instagram.com', 'https://www.pinterest.com/'  ]
-
+var www = ['www.', ''];
+var social_networks = ['facebook.com', 'twitter.com', 'plus.google.com', 'instagram.com', 'pinterest.com']
+var protocols = ['http', 'https'];
 //ROUTES
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.render('index');
 })
 
-app.post('/scrapping', (req, res)=>{
+app.post('/scrapping', (req, res) => {
     var url = req.query.url,
-    website = new Array();
-    if(validUrl.isUri(url)){
-        request(url, function(error, response, html){
-            if(!error){
+        website = new Array();
+    if (validUrl.isUri(url)) {
+        request(url, function (error, response, html) {
+            if (!error) {
                 website.push(url);
-                var $ = cheerio.load(html);              
-                social_networks.forEach(function(link){
-                    var ulink = $('a[href^="'+link+'"]').attr('href');
-                    if (ulink==null || ulink==="")
-                         website.push("N/A");
-                    else
-                        website.push(ulink);
+                var $ = cheerio.load(html);
+                social_networks.forEach(function (link) {
+                    var w = 0, sw2 = true;
+                    console.log('<<<----------------------------------------------------------------->>>');
+                    console.log('>>>link:'+link);
+                    console.log('w:'+w);
+                    console.log('sw2:'+sw2);                    
+                    while (sw2) {
+                        if (w > 1) sw2 = false;
+                        var proto = 0, sw1 = true;
+                        console.log('<<<link:'+link);
+                        console.log('proto:'+proto);
+                        console.log('sw1:'+sw1);                         
+                        while (sw1) {
+                            if (proto > 1) sw1 = false;
+                            console.log('*** ULIMK_search:'+'a[href^="' + protocols[proto] + '://' + www[w] + link + '"]');
+                            var ulink = $('a[href^="' + protocols[proto] + '://' + www[w] + link + '"]').attr('href');
+                            console.log('ULIMK_result:'+ulink);
+                            if (ulink == null || ulink === "") {
+                                if (proto==1){
+                                    if(w==0){
+                                        sw1 = false;
+                                        w=+1;
+                                    }                                        
+                                    else{
+                                        website.push("N/A");
+                                        sw2=false
+                                    }                                        
+                                        
+                                }                                    
+                            }else{                                
+                                website.push(ulink);
+                                console.log('||| website: |||'+website);
+                                sw1 = false, sw2 = false;
+                            }
+                              proto+=1;                          
+                        }                        
+                    }
                 });
                 res.send(website)
-            }else console.log('error: '+error)            
+            } else console.log('error: ' + error)
         });
     }
 })
 
 
-var getSocial = (html, network) =>{
+var getSocial = (html, network) => {
     var net = html.indexOf(network);
-    if (net!==-1){
-        var netfin = html.indexOf('>', net)-1;
-        var link = html.substring(net,netfin).substring(6);
+    if (net !== -1) {
+        var netfin = html.indexOf('>', net) - 1;
+        var link = html.substring(net, netfin).substring(6);
         return link;
     }
 }
