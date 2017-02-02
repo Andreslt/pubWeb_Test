@@ -11,10 +11,10 @@ $(document).ready(function () {
                     $.ajax({
                         type: 'POST',
                         url: '/scrapping?url=' + url,
-                        success: function (elem) {
-                            addRows(elem);
+                        success: function (elem){
+                                addRows(elem);
                         }
-                    })
+                    });
                 } else {
                     alert('la dirección: ' + url + " no es válida. Por favor inténtelo nuevamente.");
                 }
@@ -25,13 +25,23 @@ $(document).ready(function () {
     });
 
     $('#csvbutton').on('click', function () {
-        if ($('#execution').val() == "executed") 
-            window.open('/download');
-        else alert('Por favor, primero realice la consulta');        
+        if ($('#execution').val() == "executed"){
+            $.ajax({
+                type: 'POST',
+                url: '/download',
+                crossDomain: true,
+                data: JSON.stringify(rows()),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function() {
+                    window.open('/downloadcsv');
+                }
+            });            
+        }else alert('Por favor, primero realice la consulta');
     });
 
     function addRows(elem) {
-        var row = '<tr>';
+        var row = '<tr class="rows">';
         for (var i = 0; i < elem.length; i++) {
             var link = '<a href=' + elem[i] + ' target="_blank">';
             if (elem[i] === "N/A") link = "";
@@ -53,9 +63,19 @@ $(document).ready(function () {
     }
 
     function validURL(url) {
-        if ( url.indexOf('.com') != -1 || url.indexOf('.io') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
+        if (url.indexOf('.com') != -1 || url.indexOf('.io') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
             return true
         else
             return false
+    }
+
+    function rows(){   
+        var links = [];     
+        $(".rows a").each(function() {
+            $this = $(this);
+            var value = $this.html();
+            links.push(value);            
+        }); 
+        return links;       
     }
 });

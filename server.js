@@ -31,7 +31,7 @@ var protocols = ['http', 'https'];
 //ROUTES
 app.get('/', (req, res) => {
     res.render('index');
-})
+});
 
 app.post('/scrapping', (req, res) => {
     var url = req.query.url,
@@ -75,14 +75,13 @@ app.post('/scrapping', (req, res) => {
                                 }
                             } else {
                                 website.push(ulink);
-                                console.log('||| website: |||' + website);
+                                //console.log('||| website: |||' + website);
                                 sw1 = false, sw2 = false;
                             }
                             proto += 1;
                         }
                     }
                 });
-                getcsv(website);
                 res.send(website);
             } else console.log('error: ' + error)
         });
@@ -90,11 +89,17 @@ app.post('/scrapping', (req, res) => {
     else {
         console.log('is not a validUrl')
     }
-})
+});
 
-app.get('/download', (req,res)=>{
+app.get('/downloadcsv', (req,res)=>{
     res.download(__dirname + '/social-finders.csv');
-})
+});
+
+app.post('/download', (req,res)=>{
+    var links = req.body;
+    getcsv(links);
+    res.download(__dirname + '/social-finders.csv');
+});
 
 var getSocial = (html, network) => {
     var net = html.indexOf(network);
