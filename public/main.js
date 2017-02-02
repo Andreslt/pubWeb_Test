@@ -2,6 +2,7 @@ $(document).ready(function () {
 
     $('#elbutton').on('click', function () {
         cleanTable();
+        $('#execution').val('executed');
         if ($('textarea').val() !== "") {
             var lines = $('textarea').val().split('\n');
             for (var i = 0; i < lines.length; i++) {
@@ -15,13 +16,20 @@ $(document).ready(function () {
                         }
                     })
                 } else {
-                    alert('la dirección: ' + url + " no es válida. Por favor inténtelo nuevamente. Toda dirección deber comenzar por: 'http(s)://www...'")
+                    alert('la dirección: ' + url + " no es válida. Por favor inténtelo nuevamente.");
                 }
             }
         } else {
-            alert('Ingrese al menos una URL a consultar.')
+            alert('Ingrese al menos una URL a consultar.');
         }
     });
+
+    $('#csvbutton').on('click', function () {
+        if ($('#execution').val() == "executed") 
+            window.open('/download');
+        else alert('Por favor, primero realice la consulta');        
+    });
+
     function addRows(elem) {
         var row = '<tr>';
         for (var i = 0; i < elem.length; i++) {
@@ -45,7 +53,7 @@ $(document).ready(function () {
     }
 
     function validURL(url) {
-        if ( url.indexOf('http://www.') != -1 || url.indexOf('.com') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
+        if ( url.indexOf('.com') != -1 || url.indexOf('.io') != -1 || url.indexOf('.co') != -1 || url.indexOf('.net') != -1 || url.indexOf('.org') != -1)
             return true
         else
             return false
